@@ -1,4 +1,5 @@
-FROM scratch
+FROM golang/alpine
 EXPOSE 8080
-COPY ./command-service /command-service
+
+RUN go build *.go
 CMD ["./command-service"]
