@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -19,23 +17,9 @@ func main() {
 }
 
 func SplitGroup(w http.ResponseWriter, r *http.Request) {
-	var slackCommandInput SlackCommandInput
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		panic(err)
-	}
-	if err := r.Body.Close(); err != nil {
-		panic(err)
-	}
-	if err := json.Unmarshal(body, &slackCommandInput); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
-		}
-	}
+	slackCommandInputText := r.FormValue("text")
 
-	textSpaceDelineated := strings.Split(slackCommandInput.Text, " ")
+	textSpaceDelineated := strings.Split(slackCommandInputText, " ")
 	groupSizes := strings.Split(textSpaceDelineated[0], ":")
 	names := append(textSpaceDelineated[:0], textSpaceDelineated[1:]...)
 	namesLeft := names
@@ -67,11 +51,21 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(groups); err != nil {
-		panic(err)
+	returnJSON := ReturnCommand{
+		Text: groups,
 	}
+	//b, err := json.Marshal(returnJSON)
+
+	//	if err != nil {
+	//		panic(err)
+	//}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(returnJSON)
+}
+
+type ReturnCommand struct {
+	Text string `json:"text"`
 }
 
 type SlackCommandInput struct {
