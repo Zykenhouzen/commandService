@@ -1,6 +1,13 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [],
+	"package": [
+		{
+			"checksumSHA1": "yGuqd/eIodvKiK47IS3sbkwCkdg=",
+			"path": "github.com/gorilla/mux",
+			"revision": "456bcfa82d672db7cae587c9b541463f65bc2718",
+			"revisionTime": "2017-05-20T00:30:49Z"
+		}
+	],
 	"rootPath": "commandService"
 }
