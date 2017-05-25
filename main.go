@@ -52,7 +52,8 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	returnJSON := ReturnCommand{
-		Text: groups,
+		Text:         groups,
+		ResponseType: "in_channel",
 	}
 	//b, err := json.Marshal(returnJSON)
 
@@ -65,7 +66,8 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 }
 
 type ReturnCommand struct {
-	Text string `json:"text"`
+	Text         string `json:"text"`
+	ResponseType string `json:"response_type"`
 }
 
 type SlackCommandInput struct {
