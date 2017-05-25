@@ -18,6 +18,7 @@ func main() {
 
 func SplitGroup(w http.ResponseWriter, r *http.Request) {
 	slackCommandInputText := r.FormValue("text")
+	log.Println("Request Received: " + slackCommandInputText)
 
 	textSpaceDelineated := strings.Split(slackCommandInputText, " ")
 	groupSizes := strings.Split(textSpaceDelineated[0], ":")
@@ -63,6 +64,8 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(returnJSON)
+
+	log.Println("Response: " + returnJSON.Text)
 }
 
 type ReturnCommand struct {
