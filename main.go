@@ -17,6 +17,8 @@ func main() {
 }
 
 func SplitGroup(w http.ResponseWriter, r *http.Request) {
+	var errorReturnString string
+
 	slackCommandInputText := r.FormValue("text")
 	log.Println("Request Received: " + slackCommandInputText)
 
@@ -41,7 +43,16 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 		namesLeft = append(namesLeft[:indexChosen], namesLeft[1+indexChosen:]...)
 
 		namesInCurrentGroup++
-		if strconv.Itoa(namesInCurrentGroup) >= groupSizes[currentGroup] {
+
+		currentGroupSize, stringErr := strconv.Atoi(groupSizes[currentGroup])
+
+		if stringErr != nil {
+			errorReturnString = "Error: Entered a value that wasn't an int: '" + groupSizes[currentGroup] + "'"
+			log.Println(errorReturnString)
+			break
+		}
+
+		if namesInCurrentGroup > currentGroupSize {
 			namesInCurrentGroup = 0
 			currentGroup++
 			if currentGroup > (len(groupSizes) - 1) {
@@ -63,6 +74,11 @@ func SplitGroup(w http.ResponseWriter, r *http.Request) {
 	//}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+	if errorReturnString != "" {
+		returnJSON.Text = errorReturnString
+		returnJSON.ResponseType = "Ephemeral"
+	}
+
 	json.NewEncoder(w).Encode(returnJSON)
 
 	log.Println("Response: " + returnJSON.Text)
